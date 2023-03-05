@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        img {
+            height: 200px;
+            width: 400px;
+            padding: 10px;
+            box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.3);
+        }
+
+        img:hover{
+            box-shadow: 4px 4px 9px 1px rgba(0, 0, 0, 0.59);
+        }
+
+        .img-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            flex-direction: row;
+            justify-content: normal;
+            gap: 10px;
+        }
+
+
+        input[type="file"] {
+            position: absolute;
+            z-index: -1;
+            top:20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 17px;
+            color: #b8b8b8;
+                border: 1px solid #bbb;
+    padding: 5px;
+        }
+
+        .button-wrap {
+            position: relative;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #1d6355;
+            border-radius: 10px;
+            border: 4px double #cccccc;
+            color: #ffffff;
+            text-align: center;
+            font-size: 20px;
+            padding: 8px;
+            width: 100px;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .button:hover {
+            background-color: #00ab97;
+        }
+
+        .overlay {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -0;
+            display: none;
+        }
+
+        .popup {
+            z-index: 15;
+            width: 400px;
+            background: #fff;
+            position: relative;
+            margin: 10% auto;
+            padding: 150px;
+            text-align: center;
+        }
+
+        #close {
+            position: absolute;
+            color: darkgrey;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
+        .clearfix{
+            clear:both;
+            content: "";
+        }
+        .plus {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            font-size: 36px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            padding: 16px;
+            padding-left: 25px;
+            padding-bottom: 25px;
+            cursor: pointer;
+            box-shadow: 4px 4px 9px 1px rgba(0, 0, 0, 0.59);
+        }
+        .pagination{
+            text-align: center;
+            align-content: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        .step-links {
+        }
+
+        .step-links > a {
+            font-size: 18px;
+            background: #acb4ac;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px;
+        }
+        .step-links > a:hover{
+            background: #8e928e;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+            integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $('#close').on('click', function (e) {
+                $('#overlay').hide()
+            });
+            $('#plus').on('click', function (e) {
+                $('#overlay').show()
+            });
+            $('#overlay').hide()
+        })
+    </script>
+</head>
+
+<body>
+<div class="overlay" id="overlay">
+
+    <div class="popup">
+        <span id="close">x</span>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <input id="upload" type="file" name="images" multiple>
+            <button>Upload</button>
+
+        </form>
+    </div>
+</div>
+
+
+<div class="img-container">
+    {% for img in images %}
+        <img src="{{ img.images.url }}" alt="Image">
+    {% endfor %}
+</div>
+
+<div class="clearfix"></div>
+<div class="pagination">
+    <span class="step-links">
+        {% if images.has_previous %}
+            <a href="?page=1">First</a>
+            <a href="?page={{ images.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ images.number }} of {{ images.paginator.num_pages }}.
+        </span>
+
+        {% if images.has_next %}
+            <a href="?page={{ images.next_page_number }}">Next</a>
+            <a href="?page={{ images.paginator.num_pages }}">Last</a>
+        {% endif %}
+    </span>
+</div>
+
+<span class="plus" id="plus">+</span>
+</body>
+
+</html>
